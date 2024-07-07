@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Thibaut Lienart's website">
+  <meta name="author" content="Thibaut Lienart">
+  <meta name="generator" content="Franklin">
+
+  <link rel=icon href="/assets/favicon.png">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+  
+    
+  <link rel="stylesheet" href="/libs/katex/katex.min.css">
+
+
+
+  <link rel="stylesheet" href="/libs/highlight/github.min.css">
+
+  <script src="/libs/clipboard.min.js"></script>
+
+
+ <title>GMRES & Conjugate Gradient &ndash; pt. II</title>    
+
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  <style>
+    :root {
+      --oxb: #002147;
+      --camb: #A3C1AD;
+      --banana: #FFE135;
+      --lgray: #D3D3D3;
+    }
+
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {font-size: 3.5rem;}
+    }
+
+    .border-oxb {border-color: var(--oxb);}
+    .bg-oxb {background-color: var(--oxb);}
+    .text-oxb {color: var(--oxb);}
+    .border-camb {border-color: var(--camb);}
+
+    .bg-camb {background-color: var(--camb);}
+    .text-camb {color: var(--camb);}
+  </style>
+
+</head>
+
+
+  <body class="d-flex flex-column h-100">
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" id="main-name" href="/">T. Lienart</a>
+
+      <!-- POST - TAGS - ABOUT -->
+      <ul class="navbar-nav" id="main-nav">
+        <li class="nav-item">
+          <a class="nav-link "
+             aria-current="page" href="/posts/">Posts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/tags/">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/about/">About</a>
+        </li>
+      </ul>
+
+      <!-- POST TITLE / TAG -->
+      <ul class="navbar-nav me-auto" id="title-nav">
+        
+          
+          <li class="nav-item" id="post-title">
+            <a class="nav-link active" href="#">GMRES & Conjugate Gradient &ndash; pt. II</a>
+          </li>
+          
+        
+        
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+    <div class="pt-5"> </div>
+
+
+
+<!-- Content appended here -->
+
+<h1 id="pretitle_part_ii"><a href="#pretitle_part_ii" class="header-anchor">GMRES & Conjugate Gradient &#40;part II&#41;</a></h1>
+<div class="tags"><a href="/tags/" id="tag-icon"><svg width="20" height="20" viewBox="0 0 512 512"><defs><style>.cls-1{fill:#141f38}</style></defs><path class="cls-1" d="M215.8 512a76.1 76.1 0 0 1-54.17-22.44L22.44 350.37a76.59 76.59 0 0 1 0-108.32L242 22.44A76.11 76.11 0 0 1 296.2 0h139.2A76.69 76.69 0 0 1 512 76.6v139.19A76.08 76.08 0 0 1 489.56 270L270 489.56A76.09 76.09 0 0 1 215.8 512zm80.4-486.4a50.69 50.69 0 0 0-36.06 14.94l-219.6 219.6a51 51 0 0 0 0 72.13l139.19 139.19a51 51 0 0 0 72.13 0l219.6-219.61a50.67 50.67 0 0 0 14.94-36.06V76.6a51.06 51.06 0 0 0-51-51zm126.44 102.08A38.32 38.32 0 1 1 461 89.36a38.37 38.37 0 0 1-38.36 38.32zm0-51a12.72 12.72 0 1 0 12.72 12.72 12.73 12.73 0 0 0-12.72-12.76z"/><path class="cls-1" d="M217.56 422.4a44.61 44.61 0 0 1-31.76-13.16l-83-83a45 45 0 0 1 0-63.52L211.49 154a44.91 44.91 0 0 1 63.51 0l83 83a45 45 0 0 1 0 63.52L249.31 409.24a44.59 44.59 0 0 1-31.75 13.16zm-96.7-141.61a19.34 19.34 0 0 0 0 27.32l83 83a19.77 19.77 0 0 0 27.31 0l108.77-108.7a19.34 19.34 0 0 0 0-27.32l-83-83a19.77 19.77 0 0 0-27.31 0l-108.77 108.7z"/><path class="cls-1" d="M294.4 281.6a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85zM256 320a12.75 12.75 0 0 1-9.05-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2A12.8 12.8 0 0 1 256 320zM217.6 358.4a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 1 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85z"/></svg></a><a href="/tag/code/">code</a>, <a href="/tag/linear_algebra/">linear algebra</a></div>
+<div class="franklin-toc"><ol><li><a href="#gmres_and_krylov_subspaces">GMRES and Krylov subspaces</a></li><li><a href="#petrov-galerkin_condition_and_fom">Petrov-Galerkin condition and FOM</a><ol><li><a href="#rough_implementation">&#40;Rough&#41; implementation</a></li></ol></li><li><a href="#conjugate_gradient_method">Conjugate gradient method</a><ol><li><a href="#petrov-galerkin_condition_again">Petrov-Galerkin condition again</a></li><li><a href="#correspondance_between_petrov-galerkin_and_a-projections">Correspondance between Petrov-Galerkin and \(A\)-projections</a></li><li><a href="#a-orthonormal_basis">\(A\)-orthonormal basis</a></li><li><a href="#working_in_a_a-orthonormal_basis">Working in a \(A\)-orthonormal basis</a></li><li><a href="#implementation">Implementation</a></li><li><a href="#comparison">Comparison</a></li></ol></li><li><a href="#what_we_didnt_discuss">What we didn&#39;t discuss</a></li><li><a href="#short_references">Short references</a></li></ol></div>
+<h2 id="gmres_and_krylov_subspaces"><a href="#gmres_and_krylov_subspaces" class="header-anchor">GMRES and Krylov subspaces</a></h2>
+<p>Usually in the literature people present Krylov subspaces first and GMRES and related techniques after. Here we do the opposite as we came to GMRES in a different way. Starting from the iterative procedure, we now connect the dots with the Krylov subspaces.</p>
+<p>For chronology&#39;s sake, note that Krylov subspaces where introduced by <a href="https://en.wikipedia.org/wiki/Aleksey_Krylov">A. Krylov</a> before the 1950s while GMRES was discussed by <a href="https://www-users.cs.umn.edu/~saad/">Y. Saad</a> and <a href="https://cpsc.yale.edu/people/martin-schultz">M. Schultz</a> in 1986 <span class="bibref">(<a href="#saad86">Saad and Schultz (1986)</a>)</span>.</p>
+<p>Back to the present, we discussed iterative methods for solving \(Ax=b\) with \(A\) non singular and \(A\) and \(b\) with real entries:</p>
+<a id="iter1" class="anchor"></a>\[
+    x_k \quad\!\! =\quad\!\! x_{k-1} + \alpha_k p_k \quad\!\! =\quad\!\! x_0 + \sum_{i=1}^k \alpha_i p_i ,
+\]
+<p>for some linearly independent \(p_i\) and coefficients \(\alpha_i\). One of the choice of directions is \(p_k=r_{k-1}\), which corresponds to the classical GMRES algorithm.</p>
+<p>Observe that, for this choice, we have \(x_k=x_{k-1}+\alpha_kr_{k-1}\) and</p>
+\[\begin{array}{rcl} r_k \quad\!\! =\quad\!\! Ax_k - b &=& r_{k-1} + \alpha_k Ar_{k-1} \\
+                       &=& (I + \alpha_kA) r_{k-1} \\
+                       &=& (I + \alpha_kA)(I +\alpha_{k-1}A)\dots(I+\alpha_1A)r_0\end{array}\]
+<p>Expanding that product, we could find some \(\gamma_1,\dots,\gamma_k\) such that</p>
+\[
+    r_k \quad\!\! =\quad\!\! r_0 + \sum_{i=1}^k \gamma_iA^ir_0.
+\]
+<p>The coefficients \(\gamma_i\) don&#39;t matter, what does matter is that this is a linear combination of the vectors \(A^{i}r_0\) for \(i=0,\dots,k\) which span the <em>Krylov subspace</em> \(\mathcal K_{k+1}\) with</p>
+\[
+    \mathcal K_k(A, r_0) \quad\!\! =\quad\!\! \mathrm{span}\{r_0, Ar_0, \dots, A^{k-1}r_0\},
+\]
+<p>we will just write \(\mathcal K_k\) when \(A\) and \(r_0\) are obvious from the context.</p>
+<p>Since the \(r_{k-1}\) and therefore the \(p_k\) each live in \(\mathcal K_k\), the \(x_k\) given by <span class="eqref">(<a href="#iter1">1</a>)</span> are also in \(\mathcal K_k\). The iteration can then be interpreted as iteratively attempting to represent \(x\) into successive Krylov subspaces.</p>
+<p>Standard GMRES corresponds to the choice \(p_k=r_k\) with the minimum residual criterion &#40;cf. <a href="/posts/2021/07/01-gmres/">previous post</a>&#41;. Overall, this can now be re-expressed as:</p>
+\[
+    x_{k+1} - x_0 \quad\!\! =\quad\!\! \arg \min_{z \in \mathcal K_{k}}\,\, \| A(x_0+z) - b \|_2.
+\]
+<h2 id="petrov-galerkin_condition_and_fom"><a href="#petrov-galerkin_condition_and_fom" class="header-anchor">Petrov-Galerkin condition and FOM</a></h2>
+<p>In the previous post, we mostly discussed the choice of directions \(p_k\) and not the criterion for choosing the approximation \(x_k\) which we fixed at the minimum residual criterion.</p>
+<p>A different criterion that can be considered is the <strong>Petrov-Galerkin</strong> condition  requiring the residual \(r_k\) to be orthogonal to the space spanned by the directions \(\{p_1, \dots, p_k\}\). This condition leads to the <em>Full Orthogonalisation Method</em> or FOM <span class="bibref"><a href="#saad03">Saad (2003)</a></span>.</p>
+<p>For generic matrices, this method does not perform very well, but for specific matrices, it leads to the very effective <strong>Conjugate Gradient method</strong> as will be seen in the <a href="#conjugate_gradient_method">next point</a>.</p>
+<p>If we denote \(\{q_1,\dots,q_k\}\) the orthonormal basis corresponding to the \(p_k\), the Petrov-Galerkin condition amounts to \(\left\langle r_k, q_i\right\rangle=0\) for \(i=1,\dots,k\) which, in matrix form, reads</p>
+\[
+    (Q^{(k)})^tr_k \quad\!\! =\quad\!\! 0.
+\]
+<p>where \(Q^{(k)}\) is the \(n\times k\) matrix with columns \(\{q_1,\dots,q_k\}\). Following the same approach as in the <a href="/posts/2021/07/01-gmres/#minimum_residual_criterion">discussion of the minres criterion</a>, we can iteratively form \(\tilde{Q}^{(k)}\) such that \(AQ^{(k)} = \tilde{Q}^{(k)}R^{(k)}\). With \(x_k = x_0 + \sum_{i=1}^{k-1}\beta_i A q_i\) for some \(\beta_i\) to determine and letting \(\beta^{(k)}\) the vector with components \(\{\beta_1,\dots,\beta_k\}\), the condition then reads</p>
+\[
+    (Q^{(k)})^t\tilde{Q}^{(k)}R^{(k)}\beta^{(k)} \quad\!\! =\quad\!\! -(Q^{(k)})^tr_0.
+\]
+<p>Like in the minres case, this is just a regression problem in \(\mathbb R^k\) and some tricks can be applied to solve this cheaply. We dive much deeper though as, in the general case, FOM behaves much worse than GMRES as is illustrated below in a rough benchmark.</p>
+<h3 id="rough_implementation"><a href="#rough_implementation" class="header-anchor">&#40;Rough&#41; implementation</a></h3>
+<p>Most of the code here is drawn from the previous post, we simplify the resolution of the least-square problem to get the \(\beta\) using the generic backslash operator &#40;we shouldn&#39;t but it makes the code simpler&#41;. The main goal here is to get a quick comparison of using the minres vs the Petrov-Galerkin criterion.</p>
+<pre><code class="language-julia">using LinearAlgebra, StableRNGs
+
+function mgs&#33;&#40;Q::Matrix, R::Matrix, v::Vector, k::Int&#41;
+    n &#61; length&#40;v&#41;
+    Q&#91;:, k&#93; .&#61; v
+    for i &#61; 1:k-1
+        R&#91;i, k&#93; &#61; dot&#40;Q&#91;:, k&#93;, Q&#91;:, i&#93;&#41;
+        Q&#91;:, k&#93; .-&#61; R&#91;i, k&#93; .* Q&#91;:, i&#93;
+    end
+    Q&#91;:, k&#93; &#61; normalize&#40;Q&#91;:,k&#93;&#41;
+    R&#91;k, k&#93; &#61; dot&#40;v, Q&#91;:, k&#93;&#41;
+    return
+end
+
+function itersolve&#40;A::Matrix, b::Vector, x0::Vector;
+                   niter::Int&#61;10, dirs&#61;:rand, criterion&#61;:minres&#41;
+    start &#61; time&#40;&#41;
+    n &#61; size&#40;A, 1&#41;
+    r0 &#61; A * x0 - b
+
+    xk &#61; copy&#40;x0&#41;
+    rk &#61; copy&#40;r0&#41;
+    pk &#61; zeros&#40;n&#41;
+    Q &#61; zeros&#40;n, niter&#41;
+    Q̃ &#61; zeros&#40;n, niter&#41;
+    R &#61; zeros&#40;niter, niter&#41;
+    M &#61; zeros&#40;niter, niter&#41;
+    norm_rk &#61; zeros&#40;niter &#43; 1&#41;
+    norm_rk&#91;1&#93; &#61; norm&#40;r0&#41;
+    times &#61; zeros&#40;niter&#43;1&#41;
+    times&#91;1&#93; &#61; time&#40;&#41; - start
+
+   #@views for k &#61; 1:niter
+   for k &#61; 1:niter
+       if dirs &#61;&#61; :rand
+           pk &#61; randn&#40;n&#41;
+       elseif dirs &#61;&#61; :krylov
+           pk &#61; rk
+       elseif dirs &#61;&#61; :grad
+           pk &#61; A&#39; * rk
+       end
+       mgs&#33;&#40;Q, R, pk, k&#41;
+       mgs&#33;&#40;Q̃, R, A*Q&#91;:, k&#93;, k&#41;
+
+       if criterion &#61;&#61; :minres
+           γk &#61; -Q̃&#91;:, 1:k&#93;&#39; * r0
+           βk &#61; R&#91;1:k, 1:k&#93; \ γk
+       elseif criterion &#61;&#61; :fom
+           # compute M &#61; &#40;Q&#39;Q̃&#41; iteratively
+           if k &gt; 1
+               M&#91;1:k-1, k&#93; .&#61; Q&#91;:, 1:k-1&#93;&#39; * Q̃&#91;:, k&#93;
+               M&#91;k, 1:k-1&#93; .&#61; vec&#40;Q&#91;:, k&#93;&#39; * Q̃&#91;:, 1:k-1&#93;&#41;
+           end
+           M&#91;k, k&#93; &#61; dot&#40;Q&#91;:, k&#93;, Q̃&#91;:, k&#93;&#41;
+           # solve &#40;Q&#39;Q̃R&#41;β ≈ &#40;-Q&#39;r0&#41;
+           βk &#61; &#40;M&#91;1:k, 1:k&#93; * R&#91;1:k, 1:k&#93;&#41; \ &#40;-Q&#91;:, 1:k&#93;&#39; * r0&#41;
+       end
+       xk .&#61; x0 .&#43; Q&#91;:, 1:k&#93; * βk
+       rk .&#61; A * xk .- b
+       norm_rk&#91;k&#43;1&#93; &#61; norm&#40;rk&#41;
+       times&#91;k&#43;1&#93; &#61; time&#40;&#41; - start
+   end
+   return xk, norm_rk, times
+end</code></pre><pre><code class="plaintext code-output">ArgumentError: Package StableRNGs [860ef19b-820b-49d6-a774-d7a799459cd3] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<p>As usual, the code above is not optimised, particularly at places S1 and S2, a dedicated procedure should be used rather than the generic backslash operator.</p>
+<p>Our way to compute the coefficients corresponding to the FOM criterion is very crude but our goal here is simply to have a quick comparison with the other.</p>
+<pre><code class="language-julia">using PyPlot
+
+rng &#61; StableRNG&#40;908&#41;
+
+n &#61; 100
+A &#61; randn&#40;rng, n, n&#41;^2 .&#43; 5 * rand&#40;rng, n, n&#41;
+x &#61; randn&#40;rng, n&#41;
+b &#61; A * x
+x0 &#61; randn&#40;rng, n&#41;
+r0 &#61; A * x0 - b
+
+figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+for criterion in &#40;:minres, :fom&#41; # &#40;:minres, :fom&#41;
+    for dirs in &#40;:rand, :grad, :krylov&#41;
+        res &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;dirs, criterion&#61;criterion&#41;
+        semilogy&#40;res&#91;2&#93;, label&#61;&quot;&#36;&#40;dirs&#41;_&#36;&#40;criterion&#41;&quot;&#41;
+    end
+end
+xlabel&#40;&quot;Number of iterations&quot;&#41;
+ylabel&#40;&quot;Norm of the residuals&quot;&#41;
+legend&#40;&#41;</code></pre><pre><code class="plaintext code-output">ArgumentError: Package PyPlot [d330b81b-6aea-500a-939a-2ce795aea3ee] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<div class="reduce-vspace"><span style="color:red;">// Image matching '/assets/posts/2021/07/05-cg/code/comp_1.svg' not found. //</span></div>
+<p>As can be seen on the graph above, FOM can have a much less smooth convergence and GMRES is usually preferred to it &#40;at least to the naive form presented above&#41;.</p>
+<h2 id="conjugate_gradient_method"><a href="#conjugate_gradient_method" class="header-anchor">Conjugate gradient method</a></h2>
+<p>While FOM typically underperforms GMRES-style updates, in the case where \(A\) is <strong>symmetric positive definite</strong> &#40;SPD&#41; it can be modified to lead to a very useful and efficient algorithm: the conjugate gradient method.</p>
+<p>For the rest of this section, \(A\) is assumed to be SPD i.e. \(\left\langle x, Ax\right\rangle = \left\langle Ax, x\right\rangle > 0\) for any \(x\neq 0\). Recall that if \(A\) is SPD it induces an inner-product on \(\mathbb R^n\) with</p>
+\[
+    \left\langle x, y\right\rangle_A \quad\!\! =\quad\!\! \left\langle x, Ay\right\rangle.
+\]
+<p>Indeed, it is trivially bilinear, symmetric since \(\left\langle x, y\right\rangle_A = \left\langle x, Ay\right\rangle = \left\langle Ax, y\right\rangle = \left\langle y, x\right\rangle_A\) and positive definite since \(A\) is positive definite. Correspondingly, we can define a norm \(\|x\|_A^2 = \left\langle x, Ax\right\rangle\).</p>
+<h3 id="petrov-galerkin_condition_again"><a href="#petrov-galerkin_condition_again" class="header-anchor">Petrov-Galerkin condition again</a></h3>
+<p>Let&#39;s start with the basic iteration again, assuming we have an iteratively constructed set of linearly-independent \(\{p_1,\dots,p_k\}\) which we express in <em>some</em> base \(\{u_1,\dots,u_k\}\). Then, the iteration amount to</p>
+\[
+    \begin{cases}
+        x_k &=& x_0 + \sum_{i=1}^k \alpha_k u_k \\
+        r_k &=& r_0 + \sum_{i=1}^k \alpha_k Au_k
+    \end{cases}
+\]
+<p>with the \(\alpha_i\) such that \(r_k\) is perpendicular to the space spanned by the \(p_k\)  &#40;and so the \(u_k\)&#41; i.e.:</p>
+\[  
+    \left\langle r_k, u_j\right\rangle \quad\!\! =\quad\!\! 0 \quad \text{for}\quad j=1,\dots,k.
+\]
+<p>Now since \(r_k = r_{k-1} + \alpha_k Au_k\), and that, by construction, \(r_{k-1}\) must be orthogonal to \(u_j\) for \(1,\dots,k-1\), the condition becomes</p>
+<a id="pgspd" class="anchor"></a>\[\begin{array}{rcl} \left\langle Au_k, u_j\right\rangle &=& 0, \quad\text{for}\quad j=1,\dots,k-1 \\
+    \left\langle r_{k-1}, u_k\right\rangle + \alpha_k\left\langle Au_k, u_k\right\rangle &=& 0 \end{array}\]
+<p>In the case where \(A\) is SPD, we can construct a base \(\{u_1,\dots,u_k\}\) to make the above condition particularly simple to verify. Before doing that, we give an alternative interpretation of using the PG condition.</p>
+<h3 id="correspondance_between_petrov-galerkin_and_a-projections"><a href="#correspondance_between_petrov-galerkin_and_a-projections" class="header-anchor">Correspondance between Petrov-Galerkin and \(A\)-projections</a></h3>
+<p>With the choice \(p_k=r_{k-1}\), the \(\{p_1,\dots,p_k\}\) span the Krylov subspace \(\mathcal K_k(A, r_0)\), and the orthogonality condition requires that \(r_k\) be orthogonal to \(\mathcal K_k\). When \(A\) is SPD, we show below that the iterations with the PG condition are equivalent to the following iterations:</p>
+\[\begin{array}{rcl} x_{k} - x_0
+        &=& \arg\displaystyle{\min_{z\in\mathcal K_k}} \,\, \|\overline{x}-z\|_A^2\\\end{array}\]
+<p>where \(\overline{x} = x-x_0\) and \(\|u\|^2_A=\left\langle u,Au\right\rangle\). In other words, a sequence of projections of \((x-x_0)\) onto \(\mathcal K_k\) in the geometry induced by \(A\) &#40;&quot;\(A\)-projections&quot;&#41;.</p>
+<p>In order to show the equivalence, let&#39;s expand the \(A\)-norm and drop the term that doesn&#39;t depend on \(z\):</p>
+\[
+    \arg\min_{z \in \mathcal K_k} \,\, \left\langle z, Az\right\rangle - \left\langle \overline{x}, Az\right\rangle.
+\]
+<p>This is a convex minimisation problem since the objective is convex &#40;as \(A\) is SPD&#41; over a convex set \(\mathcal K_k\) &#40;convex since it&#39;s an affine subspace&#41;. We can thus consider the <a href="/posts/2018/10/10-projected-gradient-descent/#first_order_condition">first order optimality condition</a> &#40;FOC&#41; of the problem. The gradient of the objective function is \(2A(z-\overline{x})\) and the FOC at the minimiser \(z^\dagger\) is:</p>
+<a id="foc1" class="anchor"></a>\[
+    -2A(z^\dagger -\overline{x}) \quad\!\! \in\quad\!\! \{ y \in\mathbb R^n\,\, |\, \left\langle w - z^\dagger, y\right\rangle \le 0, \,\, \forall w\in\mathcal K_k \} 
+\]
+<p>where the left-hand-side is the normal cone to \(\mathcal K_k\). This amounts to requiring</p>
+\[
+    \left\langle w - z^\dagger, A(\overline{x} - z)\right\rangle \quad\!\! \le\quad\!\! 0, \,\,\, \forall w \in \mathcal K_k.
+\]
+<p>Since both \(w\) and \(z^\dagger\) are in \(\mathcal K_k\), we can let \(u=w-z^\dagger\) and require \(\left\langle \overline{x}-z^\dagger, Au\right\rangle \le 0\) for any \(u \in \mathcal K_k\). For this to always hold we must have \((\overline{x}-z^\dagger)\) be \(A\)-orthogonal to \(\mathcal K_k\) or:</p>
+\[
+    \left\langle \overline{x} - z^\dagger, Au\right\rangle \quad\!\! =\quad\!\! 0\,\,\,\forall u\in\mathcal K_k.
+\]
+<p>Equivalently, \(\left\langle A\overline{x}-Az^\dagger, u\right\rangle=0\) for all \(u \in \mathcal K_k\) or</p>
+\[
+    \left\langle Ax - A(x_0+z^\dagger), u\right\rangle \quad\!\! =\quad\!\! 0 \,\,\,\forall u\in\mathcal K_k.
+\]
+<p>with \(x_{k}=x_0+z^\dagger\), \(Ax=b\) and \(r_k=Ax_k-b\), the above equation is equivalent to requiring \(r_k\) to be perpendicular to \(\mathcal K_k\) which is the Petrov-Galerkin condition.</p>
+<div class="alert alert-info"><strong>Note</strong> if you&#39;re not familiar with the FOC with the normal cone, you can consider <a href="/posts/2018/10/10-projected-gradient-descent/#first_order_condition">this post</a>. Another way to put the condition &#40;which you might have seen in the context of the <a href="https://en.wikipedia.org/wiki/Karush&#37;E2&#37;80&#37;93Kuhn&#37;E2&#37;80&#37;93Tucker_conditions">KKT conditions</a>&#41; is that, at a minimiser of a convex constrained minimisation problem, either the gradient is zero at that point or the gradient is perpendicular to the boundary of the domain at that point.</div>
+<h3 id="a-orthonormal_basis"><a href="#a-orthonormal_basis" class="header-anchor">\(A\)-orthonormal basis</a></h3>
+<p>Let us introduce the notation \(\propto_A\), similar to our previous \(\propto\) with \(x\propto_A y\) meaning \(x = y/\|y\|_A\) for a nonzero \(y\). Then, in much the same way that we can use Gram-Schmidt to produce an orthonormal basis \(\{q_1,\dots,q_k\}\) out of a set of linearly independent vectors \(\{p_1, \dots, p_k\}\) with</p>
+\[
+    q_k \quad\!\! \propto\quad\!\! p_k - \sum_{i=1}^{k-1} \left\langle p_k, q_i\right\rangle q_i
+\]
+<p>and \(\left\langle q_i,q_j\right\rangle = \delta_{ij}\), we can produce an \(A\)-orthonormal basis \(\{u_1,\dots,u_k\}\) with</p>
+\[
+    u_k \quad\!\! \propto_A\quad\!\! p_k - \sum_{i=1}^{k-1} \left\langle p_k, q_i\right\rangle_A q_i
+\]
+<p>and \(\left\langle u_i, u_j\right\rangle_A = \delta_{ij}\).</p>
+<h3 id="working_in_a_a-orthonormal_basis"><a href="#working_in_a_a-orthonormal_basis" class="header-anchor">Working in a \(A\)-orthonormal basis</a></h3>
+<p>If we have iteratively constructed an \(A\)-orthonormal basis \(\{u_1,\dots,u_k\}\), then verifying the condition <span class="eqref">(<a href="#pgspd">11</a>)</span> simply requires</p>
+\[
+    \alpha_k \quad\!\! =\quad\!\! -\left\langle r_{k-1}, u_k\right\rangle.
+\]
+<p>This is already fairly nice. Even nicer though is that constructing the \(A\)-orthonormal basis with the &quot;Krylov&quot; direction choice &#40;i.e. \(p_k=r_{k-1}\)&#41; can be done with a simple recurrence as shown below.</p>
+<p>The Gram-Schmidt step to obtain \(u_{k+1}\) when \(p_{k+1}=r_{k}\) is</p>
+<a id="cgrec" class="anchor"></a>\[\begin{array}{rcl} u_{k+1}
+        &\propto_A&
+            \displaystyle{r_{k} - \sum_{j=1}^{k} \left\langle r_{k}, u_j\right\rangle_A u_j} \\
+        &\propto_A&
+            \displaystyle{r_{k-1} + \alpha_k A u_k - \sum_{j=1}^{k-1}\left\langle r_{k}, u_j\right\rangle_A u_j - \left\langle r_{k}, u_{k}\right\rangle_A u_{k}} \\
+        &\propto_A&
+            \displaystyle{\textcolor{blue}{r_{k-1}} + \alpha_k A u_k \textcolor{blue}{- \sum_{j=1}^{k-1}\left\langle r_{k-1}, u_j\right\rangle_A u_j} - \textcolor{darkgreen}{\alpha_k\sum_{j=1}^{k-1}\left\langle Au_k, u_j\right\rangle_A u_j} - \left\langle r_{k}, u_{k}\right\rangle_A u_{k}} \\
+        &\propto_A&
+            \displaystyle{\textcolor{blue}{\eta_{k}u_{k}} + \alpha_kAu_k - \textcolor{darkgreen}{\alpha_k\left\langle Au_k, u_{k-1}\right\rangle_A u_{k-1}} - \left\langle r_k, u_k\right\rangle_A u_k} \\
+        &\propto_A&
+            \displaystyle{-\alpha_k\left\langle Au_k, u_{k-1}\right\rangle u_{k-1} + (\eta_k - \left\langle r_k, u_k\right\rangle)u_k + \alpha_k Au_k}.\end{array}\]
+<p>In this development, we</p>
+<ol>
+<li><p>expanded \(r_k = r_{k-1} + \alpha_kAu_k\) and made the un-normalized expression for \(u_{k}\) appear with \(\eta_{k}\) the normalizing constant,</p>
+</li>
+<li><p>used that the sum \(\sum_{j=1}^{k-1}\left\langle Au_k, u_j\right\rangle_A u_j\) only has its last term non-zero &#40;see below&#41;.</p>
+</li>
+</ol>
+<p>With the choice \(p_k=r_{k-1}\), we <a href="#gmres_and_krylov_subspaces">showed earlier</a> that the vectors \(\{p_1, \dots, p_{k}\}\) span the Krylov subspace <nobr> \(\mathcal K_k(A, r_0)\).</nobr> By construction, \(\{u_1,\dots,u_k\}\) is a basis for <nobr> \(\mathcal K_k\),</nobr> and \(u_k\) is \(A\)-orthogonal to <nobr> \(\mathcal K_{k-1}\),</nobr> meaning that \(\left\langle u_k, v\right\rangle_A = 0\) for any \(v\in\mathcal K_{k-1}\).</p>
+<p>By definition of the Krylov subspace, <nobr> \(\mathcal K_{k-1} = A\mathcal K_{k-2} \cup \mathrm{span}\{r_0\}\),</nobr> and so, for any \(v \in \mathcal K_{k-2}\), we have</p>
+\[
+    \left\langle u_k, Av\right\rangle_A \quad\!\! =\quad\!\! 0.
+\]
+<p>Since \(u_j\in \mathcal K_{k-2}\) for \(1\le j\le k-2\), all terms in the sum \(\sum_{j=1}^{k-1} \left\langle Au_k, u_j\right\rangle_A u_j\) vanish apart from the last one as announced.</p>
+<h3 id="implementation"><a href="#implementation" class="header-anchor">Implementation</a></h3>
+<p>In the simple implementation below, we use three pairs \((u, Au)\) of vectors in \(\mathbb R^n\) for storage as well as \(x\) and \(r\) &#40;we could even reduce that&#41;. The important note is that the recurrence relation allows to compute the vectors \(u_k\) iteratively without having to keep all of them in memory &#40;unlike GMRES-style iterations which have linearly-growing memory requirements&#41;.</p>
+<pre><code class="language-julia">function conjgrad&#40;A::Matrix, b::Vector, x0::Vector; niter&#61;10&#41;
+    x &#61; copy&#40;x0&#41;
+    r &#61; A * x .- b
+
+    norm_rk    &#61; zeros&#40;niter&#43;1&#41;
+    norm_rk&#91;1&#93; &#61; norm&#40;r&#41;
+
+    # We need to compute the first two steps
+    # before starting to use the recurrence
+
+    u1   &#61; r
+    Au1  &#61; A * u1
+    η1   &#61; sqrt&#40;dot&#40;u1, Au1&#41;&#41;
+    u1  /&#61; η1
+    Au1 /&#61; η1
+    α    &#61; -dot&#40;r, u1&#41;
+    x  .&#43;&#61; α .* u1
+    r  .&#43;&#61; α .* Au1
+
+    norm_rk&#91;2&#93; &#61; norm&#40;r&#41;
+
+    u2  &#61; r .- dot&#40;r, Au1&#41; .* u1
+    Au2 &#61; A * u2
+    η2  &#61; sqrt&#40;dot&#40;u2, Au2&#41;&#41;
+    u2  /&#61; η2
+    Au2 /&#61; η2
+    α    &#61; -dot&#40;r, u2&#41;
+    x  .&#43;&#61; α .* u2
+    r  .&#43;&#61; α .* Au2
+
+    norm_rk&#91;3&#93; &#61; norm&#40;r&#41;
+
+    u  &#61; copy&#40;u2&#41;
+    Au &#61; copy&#40;Au2&#41;
+
+    for k &#61; 1:niter-2
+        # Recurrence relation
+        u   .&#61; -&#40;α * dot&#40;Au2, Au1&#41;&#41; .* u1 .&#43; &#40;η2 - dot&#40;r, Au2&#41;&#41; .* u2 .&#43; &#40;α .* Au2&#41;
+        Au  .&#61; A * u
+        η    &#61; sqrt&#40;dot&#40;u, Au&#41;&#41;
+        u  ./&#61; η
+        Au ./&#61; η
+
+        α   &#61; -dot&#40;r, u&#41;
+        x .&#43;&#61; α .* u
+        r .&#43;&#61; α .* Au
+
+        η2    &#61; η
+        u1   .&#61; u2
+        Au1  .&#61; Au2
+        u2   .&#61; u
+        Au2  .&#61; Au
+
+        norm_rk&#91;3&#43;k&#93; &#61; norm&#40;r&#41;
+    end
+    return x, norm_rk
+end</code></pre>
+<p>In the implementation above, the step with dominant complexity is the matrix-vector multiplication to compute \(Au\), everything else has negligible complexity in comparison.</p>
+<h3 id="comparison"><a href="#comparison" class="header-anchor">Comparison</a></h3>
+<p>In the example below, we construct a simple and well-conditioned SPD system, and compare the various methods discussed so far. Again, this is not meant as a thorough benchmark but rather as a way to make a couple of interesting observations.</p>
+<pre><code class="language-julia">using IterativeSolvers
+
+begin
+    rng &#61; StableRNG&#40;111&#41;
+
+    # construct a simple SPD matrix
+    n &#61; 100
+    A &#61; randn&#40;rng, n, n&#41;
+    A &#61; A&#39;A &#43; 2I
+
+    κA &#61; round&#40;cond&#40;A&#41;, sigdigits&#61;3&#41;
+    println&#40;&quot;Condition number κ&#40;A&#41;: &#36;κA&quot;&#41;
+
+    x &#61; randn&#40;rng, n&#41;
+    b &#61; A * x
+    x0 &#61; randn&#40;rng, n&#41;
+
+    xcg, nrk &#61; conjgrad&#40;A, b, copy&#40;x0&#41;; niter&#61;n&#41;
+    res_krylov &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:krylov, criterion&#61;:minres&#41;
+    res_grad &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:grad, criterion&#61;:minres&#41;
+    res_fom_k &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:krylov, criterion&#61;:fom&#41;
+    res_fom_g &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:grad, criterion&#61;:fom&#41;
+
+    xcg, lcg &#61; cg&#33;&#40;copy&#40;x0&#41;, A, b; maxiter&#61;n, log&#61;true, reltol&#61;0&#41;
+    ncg &#61; &#91;norm&#40;A*x0-b&#41;, lcg.data&#91;:resnorm&#93;...&#93;
+
+    figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+    semilogy&#40;nrk, label&#61;&quot;CG&quot;, marker&#61;&quot;v&quot;&#41;
+    semilogy&#40;res_krylov&#91;2&#93;, label&#61;&quot;GMRES &#40;krylov&#41;&quot;&#41;
+    semilogy&#40;res_grad&#91;2&#93;, label&#61;&quot;GMRES &#40;grad&#41;&quot;&#41;
+    semilogy&#40;res_fom_k&#91;2&#93;, label&#61;&quot;FOM &#40;krylov&#41;&quot;, linestyle&#61;&quot;--&quot;&#41;
+    semilogy&#40;res_fom_g&#91;2&#93;, label&#61;&quot;FOM &#40;grad&#41;&quot;, linestyle&#61;&quot;--&quot;&#41;
+    semilogy&#40;ncg, label&#61;&quot;CG &#40;IterativeSolvers&#41;&quot;, marker&#61;&quot;x&quot;&#41;
+    xlabel&#40;&quot;Number of iterations&quot;&#41;
+    ylabel&#40;&quot;Norm of the residuals&quot;&#41;
+    legend&#40;&#41;
+end</code></pre><pre><code class="plaintext code-output">ArgumentError: Package IterativeSolvers [42fd0dbc-a981-5370-80f2-aaf504508153] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<div class="reduce-vspace"><span style="color:red;">// Image matching '/assets/posts/2021/07/05-cg/code/comp_cg.svg' not found. //</span></div>
+<p>On the graph above we can see a few things:</p>
+<ul>
+<li><p>Our implementation of CG gives essentially the same results as that of the IterativeSolvers package which gives some confidence in the implementation of <code>conjgrad</code> in terms of correctness,</p>
+</li>
+<li><p>GMRES and FOM with Krylov directions have a very similar behaviour and are better than CG for a large number of iterations,</p>
+</li>
+<li><p>GMRES and FOM with &quot;Grad&quot; directions have a very similar behaviour and are quite a bit worse than the other two.</p>
+</li>
+</ul>
+<p>Recall that all these methods require the same complexity per step &#40;dominated by <strong>one</strong> matrix-vector product&#41; with the exception of the ones using the grad direction &#40;<strong>two</strong> matrix-vector products&#41;.</p>
+<p>The first point above is the most important one at this point, the other two help highlight that it can be difficult to compare iterative methods in general. Consider for instance a very similar example but with much worse condition number:</p>
+<pre><code class="language-julia">begin
+    rng &#61; StableRNG&#40;111&#41;
+
+    # construct a simple SPD matrix
+    n &#61; 100
+    A &#61; randn&#40;rng, n, n&#41;
+    A &#61; &#40;A&#39;A &#43; 2I&#41;^4
+
+    κA &#61; round&#40;cond&#40;A&#41;, sigdigits&#61;3&#41;
+    println&#40;&quot;Condition number κ&#40;A&#41;: &#36;κA&quot;&#41;
+
+    x &#61; randn&#40;rng, n&#41;
+    b &#61; A * x
+    x0 &#61; randn&#40;rng, n&#41;
+
+    xcg, nrk &#61; conjgrad&#40;A, b, copy&#40;x0&#41;; niter&#61;n&#41;
+    res_krylov &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:krylov, criterion&#61;:minres&#41;
+    res_grad &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:grad, criterion&#61;:minres&#41;
+    res_fom_k &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:krylov, criterion&#61;:fom&#41;
+    res_fom_g &#61; itersolve&#40;A, b, x0; niter&#61;n, dirs&#61;:grad, criterion&#61;:fom&#41;
+
+    xcg, lcg &#61; cg&#33;&#40;copy&#40;x0&#41;, A, b; maxiter&#61;n, log&#61;true, reltol&#61;0&#41;
+    ncg &#61; &#91;norm&#40;A*x0-b&#41;, lcg.data&#91;:resnorm&#93;...&#93;
+
+    figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+    semilogy&#40;nrk, label&#61;&quot;CG&quot;, marker&#61;&quot;v&quot;&#41;
+    semilogy&#40;res_krylov&#91;2&#93;, label&#61;&quot;GMRES &#40;krylov&#41;&quot;&#41;
+    semilogy&#40;res_grad&#91;2&#93;, label&#61;&quot;GMRES &#40;grad&#41;&quot;&#41;
+    semilogy&#40;res_fom_k&#91;2&#93;, label&#61;&quot;FOM &#40;krylov&#41;&quot;, linestyle&#61;&quot;--&quot;&#41;
+    semilogy&#40;res_fom_g&#91;2&#93;, label&#61;&quot;FOM &#40;grad&#41;&quot;, linestyle&#61;&quot;--&quot;&#41;
+    semilogy&#40;ncg, label&#61;&quot;CG &#40;IterativeSolvers&#41;&quot;, marker&#61;&quot;x&quot;&#41;
+    xlabel&#40;&quot;Number of iterations&quot;&#41;
+    ylabel&#40;&quot;Norm of the residuals&quot;&#41;
+    legend&#40;&#41;
+end</code></pre><pre><code class="plaintext code-output">UndefVarError: `StableRNG` not defined
+</code></pre>
+<div class="reduce-vspace"><span style="color:red;">// Image matching '/assets/posts/2021/07/05-cg/code/comp_cg2.svg' not found. //</span></div>
+<p>So in this case CG does poorly whereas the other methods still end up eventually converging &#40;though requiring a large number of steps&#41;.</p>
+<h2 id="what_we_didnt_discuss"><a href="#what_we_didnt_discuss" class="header-anchor">What we didn&#39;t discuss</a></h2>
+<p>In these two posts, the main goal was to re-obtain GMRES and CG from scratch and in a constructive fashion. There&#39;s however quite a few interesting things that we didn&#39;t discuss to try to keep the presentation not too cluttered, these include:</p>
+<ul>
+<li><p>how these iterative methods relate to the Hessenberg decomposition where \(A=Q'HQ\) for an orthonormal matrix \(Q\) and a <a href="https://en.wikipedia.org/wiki/Hessenberg_matrix">Hessenberg matrix</a> \(H\) &#40;a matrix with \(h_{ij}=0\) for \(i > j+1\)&#41;,</p>
+</li>
+<li><p>how the iterative orthogonalisation procedure &#40;Modified Gram-Schmidt&#41; in the case of Krylov subspaces connect to methods for obtaining eigenvalues &#40;<a href="https://en.wikipedia.org/wiki/Arnoldi_algorithm">Arnoldi iteration</a> and <a href="https://en.wikipedia.org/wiki/Lanczos_algorithm">Lanczos algorithm</a> in the symmetric case&#41; &#40;see e.g. <span class="bibref"><a href="#gs06">Strang (2006)</a></span>&#41;,</p>
+</li>
+<li><p>how these iterative methods can suffer from <strong>stalling</strong> and how to deal with it, and what kind of guarantees they can offer,</p>
+</li>
+<li><p>the use of preconditioning to speed up convergence,</p>
+</li>
+<li><p>extensions such as BiCGStab <span class="bibref"><a href="#vv92">van der Vorst (1992)</a></span>.</p>
+</li>
+</ul>
+<h2 id="short_references"><a href="#short_references" class="header-anchor">Short references</a></h2>
+<ol>
+<li><p><a id="saad86" class="anchor"></a><strong>Saad</strong> and <strong>Schultz</strong>, <a href="https://web.stanford.edu/class/cme324/saad-schultz.pdf">GMRES: a generalized minimal residual algorithm for solving nonsymmetric linear systems</a>, 1986. – The original GMRES paper.</p>
+</li>
+<li><p><a id="saad03" class="anchor"></a><strong>Saad</strong>, <a href="https://www-users.cs.umn.edu/~saad/IterMethBook_2ndEd.pdf">Iterative Methods for Sparse Linear Systems</a>, 2003. – A reference book on iterative methods by one of the author of GMRES.</p>
+</li>
+<li><p><a id="vv92" class="anchor"></a><strong>van der Vorst</strong>, Bi-CGSTAB: A Fast and Smoothly Converging Variant of Bi-CG for the Solution of Nonsymmetric Linear Systems, 1992. – The original BiCGStab paper, unfortunately not in open access.</p>
+</li>
+<li><p><a id="vv97" class="anchor"></a><strong>van der Vorst</strong> and <strong>Chan</strong>, <a href="http://web.cs.ucla.edu/classes/cs258f/doc/linearSysSolver.pdf">Linear System Solvers: Sparse Iterative Methods</a>, 1997. – A book chapter discussing iterative methods and, in particular, CG, GMRES etc.</p>
+</li>
+<li><p><a id="gs06" class="anchor"></a><strong>Strang</strong>, <a href="https://ocw.mit.edu/courses/mathematics/18-086-mathematical-methods-for-engineers-ii-spring-2006/readings/am64.pdf">Krylov Subspaces and Conjugate Gradients</a>, 2006. – Lecture notes from Gil Strang on the topic.</p>
+</li>
+</ol>
+
+  </div> <!-- container -->
+</main> <!-- flex shrink 0 -->
+
+<div class='py-3'></div>
+
+<footer class="footer mt-auto py-3 bg-light">
+	<div class="container">
+		<span class="text-muted">
+			&copy; Thibaut Lienart, 2024.
+			Website made with <a href="https://franklinjl.org">Franklin.jl</a>.
+		</span>
+	</div>
+</footer>
+
+
+	<script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+	<script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+	<script>
+		(function(){
+
+			// Get the elements.
+			// - the 'pre' element.
+			// - the 'div' with the 'paste-content' id.
+
+			var pre = document.getElementsByTagName('pre');
+
+			// Add a copy button in the 'pre' element.
+			// which only has the className of 'language-'.
+
+			for (var i = 0; i < pre.length; i++) {
+				var cName = pre[i].children[0].className
+				if ( cName.includes('language-') || cName.includes('hljs') && !cName.includes('plaintext') ) {
+					var button           = document.createElement('button');
+					button.className = 'copy-button';
+					button.textContent = 'Copy';
+
+					pre[i].appendChild(button);
+				}
+			};
+
+			// Run Clipboard
+
+			var copyCode = new Clipboard('.copy-button', {
+				target: function(trigger) {
+					return trigger.previousElementSibling;
+				}
+			});
+
+			// On success:
+			// - Change the "Copy" text to "Copied".
+			// - Swap it to "Copy" in 2s.
+			// - Lead user to the "contenteditable" area with Velocity scroll.
+
+			copyCode.on('success', function(event) {
+				event.clearSelection();
+				event.trigger.textContent = 'Copied';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 2000);
+
+			});
+
+			// On error (Safari):
+			// - Change the  "Press Ctrl+C to copy"
+			// - Swap it to "Copy" in 2s.
+
+			copyCode.on('error', function(event) {
+				event.trigger.textContent = 'Press "Ctrl + C" to copy';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 5000);
+			});
+
+		})();
+	</script>
+
+
+
+<!-- CONTENT ENDS HERE -->
+
+
+  
+    <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+
+    <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+
+
+
+
+  </body>
+</html>

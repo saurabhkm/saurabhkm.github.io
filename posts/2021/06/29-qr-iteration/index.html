@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Saurabh Kumar's website">
+  <meta name="author" content="Saurabh Kumar">
+  <meta name="generator" content="Franklin">
+
+  <link rel=icon href="/assets/favicon.png">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+  
+    
+  <link rel="stylesheet" href="/libs/katex/katex.min.css">
+
+
+
+  <link rel="stylesheet" href="/libs/highlight/github.min.css">
+
+  <script src="/libs/clipboard.min.js"></script>
+
+
+ <title>QR for eigen decomposition</title>    
+
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  <style>
+    :root {
+      --oxb: #002147;
+      --camb: #A3C1AD;
+      --banana: #FFE135;
+      --lgray: #D3D3D3;
+    }
+
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {font-size: 3.5rem;}
+    }
+
+    .border-oxb {border-color: var(--oxb);}
+    .bg-oxb {background-color: var(--oxb);}
+    .text-oxb {color: var(--oxb);}
+    .border-camb {border-color: var(--camb);}
+
+    .bg-camb {background-color: var(--camb);}
+    .text-camb {color: var(--camb);}
+  </style>
+
+</head>
+
+
+  <body class="d-flex flex-column h-100">
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" id="main-name" href="/">Saurabh Kumar</a>
+
+      <!-- POST - TAGS - ABOUT -->
+      <ul class="navbar-nav" id="main-nav">
+        <li class="nav-item">
+          <a class="nav-link "
+             aria-current="page" href="/posts/">Posts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/tags/">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/about/">About</a>
+        </li>
+      </ul>
+
+      <!-- POST TITLE / TAG -->
+      <ul class="navbar-nav me-auto" id="title-nav">
+        
+          
+          <li class="nav-item" id="post-title">
+            <a class="nav-link active" href="#">QR for eigen decomposition</a>
+          </li>
+          
+        
+        
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+    <div class="pt-5"> </div>
+
+
+
+<!-- Content appended here -->
+
+<h1 id="qr_for_eigen_decomposition"><a href="#qr_for_eigen_decomposition" class="header-anchor">QR for eigen decomposition</a></h1>
+<div class="tags"><a href="/tags/" id="tag-icon"><svg width="20" height="20" viewBox="0 0 512 512"><defs><style>.cls-1{fill:#141f38}</style></defs><path class="cls-1" d="M215.8 512a76.1 76.1 0 0 1-54.17-22.44L22.44 350.37a76.59 76.59 0 0 1 0-108.32L242 22.44A76.11 76.11 0 0 1 296.2 0h139.2A76.69 76.69 0 0 1 512 76.6v139.19A76.08 76.08 0 0 1 489.56 270L270 489.56A76.09 76.09 0 0 1 215.8 512zm80.4-486.4a50.69 50.69 0 0 0-36.06 14.94l-219.6 219.6a51 51 0 0 0 0 72.13l139.19 139.19a51 51 0 0 0 72.13 0l219.6-219.61a50.67 50.67 0 0 0 14.94-36.06V76.6a51.06 51.06 0 0 0-51-51zm126.44 102.08A38.32 38.32 0 1 1 461 89.36a38.37 38.37 0 0 1-38.36 38.32zm0-51a12.72 12.72 0 1 0 12.72 12.72 12.73 12.73 0 0 0-12.72-12.76z"/><path class="cls-1" d="M217.56 422.4a44.61 44.61 0 0 1-31.76-13.16l-83-83a45 45 0 0 1 0-63.52L211.49 154a44.91 44.91 0 0 1 63.51 0l83 83a45 45 0 0 1 0 63.52L249.31 409.24a44.59 44.59 0 0 1-31.75 13.16zm-96.7-141.61a19.34 19.34 0 0 0 0 27.32l83 83a19.77 19.77 0 0 0 27.31 0l108.77-108.7a19.34 19.34 0 0 0 0-27.32l-83-83a19.77 19.77 0 0 0-27.31 0l-108.77 108.7z"/><path class="cls-1" d="M294.4 281.6a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85zM256 320a12.75 12.75 0 0 1-9.05-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2A12.8 12.8 0 0 1 256 320zM217.6 358.4a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 1 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85z"/></svg></a><a href="/tag/code/">code</a>, <a href="/tag/linear_algebra/">linear algebra</a></div>
+<div class="franklin-toc"><ol><li><a href="#diagonalisation">Diagonalisation</a></li><li><a href="#the_power_method">The Power Method</a><ol><li><a href="#implementation">Implementation</a></li></ol></li><li><a href="#from_the_power_method_to_the_qr_iteration">From the Power Method to the QR iteration</a><ol><li><a href="#power-method_projection">Power-Method &#43; projection</a></li><li><a href="#enters_the_qr_factorisation">Enters the QR factorisation</a></li><li><a href="#implementation__2">Implementation</a></li><li><a href="#generalisations">Generalisations</a></li></ol></li><li><a href="#short_references">Short references</a></li></ol></div>
+<h2 id="diagonalisation"><a href="#diagonalisation" class="header-anchor">Diagonalisation</a></h2>
+<p>Let \(A \in \mathbb C^{n\times n}\), we call an eigenpair a nonzero vector \(v\in\mathbb C^n\) and a scalar \(\lambda \in \mathbb C\) if \(Av = \lambda v\). If we can find \(n\) linearly independent \(\{v_1, \dots, v_n\}\) with corresponding \(\{\lambda_1, \dots,\lambda_n\}\) then \(A\) is said to be <em>diagonalisable</em> and we can write</p>
+\[
+  AV \quad\!\! =\quad\!\! V\Lambda
+\]
+<p>where the columns of \(V\) are the \(v_k\) and \(\Lambda\) is a diagonal matrix with \(\Lambda_{kk} = \lambda_k\). Further, since the \(v_k\) are linearly independent, \(V\) is invertible and</p>
+\[
+ A \quad\!\! =\quad\!\! V\Lambda V^{-1}.
+\]
+<p>We will focus on determining eigenvalues and eigenvectors of a real-symmetric matrix with distinct eigenvalues which is a simple yet useful base scenario. As we show below, in that case the eigenvalues are real and the eigenvectors are orthogonal which will allow us to connect things nicely with the previous post on <a href="/posts/2021/06/25-gram-schmidt/">Gram-Schmidt orthogonalisation and QR factorisation</a>.</p>
+<div class="colbox-blue"><strong>Theorem</strong>: A Hermitian matrix \(A\) &#40;i.e. such that \(A^\star=A\)&#41; has real eigenvalues.</div>
+<p>Let \((v, \lambda)\) be any eigenpair for \(A\) so that \(Av = \lambda v\). Then, since \(A = A^\star\) we have</p>
+<p>\[\begin{array}{rcl} (Av)^\star v &=& v^\star A^\star v \quad\!\! =\quad\!\! v^\star (Av)\end{array}\] the left and right term imply \[\begin{array}{rcl} \lambda^\star v^\star v &=& \lambda v^\star v\end{array}\] and therefore \(\lambda = \lambda^\star\) since \(v\) is nonzero.</p>
+<div class="colbox-blue"><strong>Theorem</strong>: the eigenvectors of a Hermitian matrix \(A\) corresponding to distinct eigenvalues are orthogonal.</div>
+<p>Let \((v_1, \lambda_1)\) and \((v_2, \lambda_2)\) be two eigenpairs with \(\lambda_1\neq \lambda_2\); then,</p>
+<p>\[\begin{array}{rcl} (Av_1)^\star (Av_2) &=& (\lambda_1v_1)^\star A v_2 \quad\!\! =\quad\!\! \lambda_1 (Av_1)^\star v_2 \quad\!\! =\quad\!\! \lambda_1^2 v_1^\star v_2 \\
+        &=& v_1^\star A (\lambda_2 v_2) \quad\!\! =\quad\!\! \lambda_2^2 v_1^\star v_2.\end{array}\] Thus, we have \(\lambda_1^2 v_1^\star v_2 = \lambda_2^2 v_1^\star v_2\), but since \(\lambda_1 \neq \lambda_2\) we must necessarily have \(v_1^\star v_2 = 0\).</p>
+<div class="colbox-blue"><strong>Corollary</strong>: let \(A\) be real-valued and symmetric, then its eigenvectors are real-valued.</div>
+<p>This is a trivial consequence of the first theorem: since all eigenvalues are real, for any eigenpair we have \(Av = \lambda v\) but since \(A\) is real-valued and \(\lambda\) is real, we must necessarily have the entries of \(v\) be real too.</p>
+<p>A last thing we should prove is that a symmetric matrix is always diagonalisable but we&#39;ll shove this under the carpet and refer the reader to e.g. <span class="bibref"><a href="#gvl83">Golub and Van Loan (1983)</a></span> for details.</p>
+<p>For the rest of this page, we&#39;ll assume that \(A\) is <strong>real-valued</strong>, <strong>symmetric</strong> and has <strong>distinct</strong> &#40;real&#41; <strong>eigenvalues</strong> \(\lambda_k\) with normalised eigenvectors \(v_k\) &#40;i.e. the \(v_k\) form an orthonormal basis of \(\mathbb R^n\)&#41;. Further, we will assume &#40;without loss of generality&#41; that the \((v_k,\lambda_k)\) are <em>ordered</em> by the absolute value of \(\lambda_k\) so that \(|\lambda_1|>|\lambda_2|>\dots>|\lambda_n|\).</p>
+<h2 id="the_power_method"><a href="#the_power_method" class="header-anchor">The Power Method</a></h2>
+<p>Let \(c \in \mathbb R^n\) be an arbitrary vector. Since the normalized eigenvectors \(v_k\) of \(A\) form an orthonormal basis, we can write</p>
+\[
+    c \quad\!\! =\quad\!\! \sum_{i=1}^n \alpha_i v_i \quad\text{with}\quad \alpha_i \,\,=\,\, \left\langle c, v_i\right\rangle.
+\]
+<p>Then, multiplying \(c\) by the matrix \(A^k\) for \(k\ge 1\), we have:</p>
+\[
+    A^kc \quad\!\! =\quad\!\! \sum_{i=1}^n \alpha_i \lambda_i^k v_i \quad\!\! =\quad\!\! \lambda_1^k\left[\alpha_1 v_1 + \sum_{i=2}^n \alpha_i \left({\lambda_i\over \lambda_1}\right)^k v_i\right].
+\]
+<p>All the ratios \(|\lambda_i/\lambda_1|\) are smaller than 1 and so vanish for large \(k\) since we assumed that \(|\lambda_1|>|\lambda_i|\) for \(i=2,\dots,n\). Let us assume that we picked \(c\) such that \(\alpha_1 \neq 0\); then, for \(k\) sufficiently large, \(A^k c\) becomes dominated by \(\alpha_1\lambda_1^k v_1\) as all other terms go to zero.</p>
+<p>In summary, for a \(c\) such that \(\left\langle c, v_1\right\rangle \neq 0\), \(A^kc\) will align with \(v_1\) as \(k\) gets larger. Using \(v\propto w\) to mean \(v = w / \|w\|\) for nonzero \(w\), we can use the following iteration:</p>
+<ul>
+<li><p>\(w^{(1)} \propto Ac\)</p>
+</li>
+<li><p>\(w^{(k)} \propto Aw^{(k-1)}\) for \(k=2,\dots\)</p>
+</li>
+</ul>
+<p>for sufficiently large \(k\), \(w^{(k)}\) is approximately aligned with \(v_1\). Correspondingly, we will have \(Aw^{(k)} \approx \lambda_1 w^{(k)}\) and can recover an approximation of \(\lambda_1\) considering the <em>Raleigh quotient</em>:</p>
+\[
+    \rho^{(k)} \quad\!\! =\quad\!\! { \left\langle Aw^{(k)}, w^{(k)}\right\rangle \over \left\langle w^{(k)}, w^{(k)}\right\rangle }
+\]
+<p>and \(\rho^{(k)} \to \lambda_1\) with increasing \(k\).</p>
+<h3 id="implementation"><a href="#implementation" class="header-anchor">Implementation</a></h3>
+<p>The power method is very simple to implement, here&#39;s a basic implementation in Julia which shows convergence:</p>
+<pre><code class="language-julia">using LinearAlgebra, StableRNGs
+
+function power_method&#40;A::Symmetric, x0; iter&#61;10&#41;
+    λ_max &#61; eigmax&#40;A&#41;   # to show convergence
+    w &#61; copy&#40;x0&#41;
+    Aw &#61; zero&#40;w&#41;
+    ρ &#61; zero&#40;eltype&#40;w&#41;&#41;
+    for i &#61; 1:iter
+        Aw .&#61; A * w
+        ρ  &#61; dot&#40;Aw, w&#41; / dot&#40;w, w&#41;
+        w .&#61; normalize&#40;Aw&#41;
+        println&#40;&quot;Step &#36;i: &quot;, round&#40;abs&#40;&#40;ρ - λ_max&#41; ./ λ_max&#41;, sigdigits&#61;2&#41;&#41;
+    end
+    return w, ρ
+end
+
+rng &#61; StableRNG&#40;555&#41;
+n &#61; 5
+A &#61; Symmetric&#40;rand&#40;rng, n, n&#41;&#41;
+c &#61; randn&#40;rng, n&#41;
+
+w, ρ &#61; power_method&#40;A, c&#41;
+err_eig &#61; round&#40;norm&#40;A * w - ρ * w&#41;, sigdigits&#61;2&#41;
+println&#40;&quot;‖Aw - ρw‖: &#36;err_eig&quot;&#41;</code></pre><pre><code class="plaintext code-output">ArgumentError: Package StableRNGs [860ef19b-820b-49d6-a774-d7a799459cd3] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<h2 id="from_the_power_method_to_the_qr_iteration"><a href="#from_the_power_method_to_the_qr_iteration" class="header-anchor">From the Power Method to the QR iteration</a></h2>
+<h3 id="power-method_projection"><a href="#power-method_projection" class="header-anchor">Power-Method &#43; projection</a></h3>
+<p>The power method as shown above can fairly easily give us \((\lambda_1, v_1)\) but what about the other eigenpairs? Let \(c_1\) be an arbitrary vector with \(\left\langle c_1, v_1\right\rangle \neq 0\), we&#39;ve shown that the power method leads to \(w_1^{(k)} \approx v_1\) for suitably large \(k\). We could subtract the projection of \(c_1\) onto the space spanned by \(w_1^{(k)}\) and apply the power method to try to get \(v_2\). Indeed, with \(c_1 = \sum_{i=1}^n \left\langle c_1, v_i\right\rangle v_i\), we&#39;d have</p>
+\[\begin{array}{rcl} c_2 &=& c_1 - \left\langle c_1, w_1^{(k)}\right\rangle w_1^{(k)}\\
+        &\approx& \sum_{i=2}^n \left\langle c_1, v_i\right\rangle v_i\end{array}\]
+<p>and with the same development as that of the previous point, we get that \(A^kc_2 \propto v_2\) &#40;approximately&#41;. We could iterate this approach until we&#39;ve approximated all \(v_n\):</p>
+<ul>
+<li><p>take \(c_j = c_{j-1} - \left\langle c_{j-1}, w^{(k)}_{j-1}\right\rangle w^{(k)}_{j-1}\)</p>
+</li>
+<li><p>let \(w^{(k)}_j \propto A^kc_j\)</p>
+</li>
+</ul>
+<p>for sufficiently large \(k\), each of the \(w^{(k)}_j\) would be approximately equal to \(v_j\). Note that we wouldn&#39;t have to use the same \(k\) at every power-step and could just use whatever \(k\) is large enough to reach some notion of convergence.</p>
+<h3 id="enters_the_qr_factorisation"><a href="#enters_the_qr_factorisation" class="header-anchor">Enters the QR factorisation</a></h3>
+<p>We could try improving on the previous procedure so that we compute all the vectors simultaneously. For this, consider an arbitrary matrix \(C_1 \in \mathbb R^{n\times n}\) instead of a single vector \(c\) and repeatedly apply the following steps:</p>
+<ol>
+<li><p>compute \(M_k = AC_k\)</p>
+</li>
+<li><p>extract an orthonormal basis \(Q_k\) out of \(M_k\) via the QR algorithm i.e, \(M_k = Q_kR_k\)</p>
+</li>
+<li><p>let \(C_{k+1}=Q_k\) and go to step 1.</p>
+</li>
+</ol>
+<p>this amounts effectively to the same steps as before but instead of going for all vector index \(j\) and then for each power index \(k\), we go for each power index \(k\) and for all vector index \(j\).</p>
+<p>A specific \(C_1\) we could use of course is \(Q_1=Q\), the factor of \(A=QR\) with then:</p>
+<ol>
+<li><p>compute \(M_k = AQ_{k-1}\) for \(k=2, \dots\),</p>
+</li>
+<li><p>compute the QR factorisation of \(M_k = Q_k R_k\).</p>
+</li>
+</ol>
+<p>Taking a look at the first few iterations, we have:</p>
+<p>\[\begin{array}{rcl} A &=& Q_1 R_1 \\
+    M_2 &=& AQ_1 \quad\!\! =\quad\!\! Q_2 R_2 \\
+    M_3 &=& AQ_2 \quad\!\! =\quad\!\! Q_3 R_3\end{array}\] and so on. The second line can also be written \(Q_1R_1Q_1 = Q_2R_2\) or</p>
+\[
+    R_1Q_1 \quad\!\! =\quad\!\! Q_{12}R_2
+\]
+<p>with \(Q_{12} = Q_1^t Q_2\) &#40;which is still orthonormal&#41;. In a similar fashion, we can massage the third line into:</p>
+\[
+    A(Q_1 Q_1^t)Q_2 \quad\!\! =\quad\!\! Q_3 R_3
+\]
+<p>or \(Q_2R_2Q_{12} = Q_3R_3\) which we can also write as</p>
+\[
+    R_2Q_{12} = Q_{23}R_3
+\]
+<p>with \(Q_{23} = Q_2^tQ_3\). Bootstrapping from there, we can write \(R_kQ_{k-1,k} = Q_{k,k+1}R_{k+1}\) with \(Q_{01}=Q_1\) and it&#39;s easy to show that \(Q_1\dots Q_k Q_{k,{k+1}} = Q_{k+1}\).</p>
+<p>The advantage of expressing the whole iteration in terms of orthonormal matrices is that it&#39;s more numerically stable than repeatedly applying \(A\) which can be poorly conditioned. Writing it out, we have:</p>
+<ol>
+<li><p>get \((Q_{k,k+1}, R_{k+1}) = \text{qr}(R_{k} Q_{k-1,k})\) with \(Q_{01}, R_1=\text{qr}(A)\),</p>
+</li>
+<li><p>compute \(Q_{k+1} = Q_k Q_{k,k+1}\).</p>
+</li>
+</ol>
+<p>This is the &#40;basic&#41; QR iteration algorithm, also known as the Francis QR algorithm <span class="bibref">(<a href="#gvl83">Golub and Van Loan (1983)</a>)</span>. For \(k\) sufficiently large, the columns of \(Q_{k+1}\) will align with the eigenvectors of \(A\) so that \(AQ_{k+1} \approx Q_{k+1}\mathrm{diag}(\lambda_1, \dots, \lambda_n)\). Correspondingly, we approximate the eigenvalues with</p>
+\[
+    Q_{k+1}^tAQ_{k+1} \quad\!\! \approx\quad\!\! \text{diag}(\lambda_1, \dots, \lambda_n).
+\]
+<h3 id="implementation__2"><a href="#implementation__2" class="header-anchor">Implementation</a></h3>
+<p>A basic version of the QR algorithm is fairly easy to implement as shown below with an implementation in Julia. The function is called <code>francis_qr</code> since the algorithm is sometimes called &quot;Francis QR algorithm&quot; in reference to the english computer scientist <a href="https://en.wikipedia.org/wiki/John_G._F._Francis">John Francis</a>, see e.g. <span class="bibref"><a href="#gvl83">Golub and Van Loan (1983)</a></span>.</p>
+<pre><code class="language-julia">using PyPlot
+
+function francis_qr&#40;A::Symmetric; iter&#61;20&#41;
+    λ &#61; sort&#40;eigvals&#40;A&#41;, by&#61;abs, rev&#61;true&#41;   # to show convergence
+    Q̃, R̃ &#61; qr&#40;A&#41;
+    Q &#61; copy&#40;Q̃&#41;
+    D &#61; zero&#40;Q&#41;
+    δ &#61; zeros&#40;iter&#41;
+    for i &#61; 1:iter
+        Q̃, R̃ &#61; qr&#40;R̃ * Q̃&#41;    # step 1
+        Q *&#61; Q̃              # step 2
+        # computations to show convergence
+        D    &#61; Q&#39; * A * Q
+        λ̂    &#61; diag&#40;D&#41;
+        δ&#91;i&#93; &#61; maximum&#40;abs.&#40;&#40;λ̂ .- λ&#41; ./ λ&#41;&#41;
+    end
+    return Q, D, δ
+end
+
+rng &#61; StableRNG&#40;510&#41;
+n &#61; 5
+A &#61; Symmetric&#40;rand&#40;rng, n, n&#41;&#41;
+
+Q, D, δ &#61; francis_qr&#40;A&#41;
+
+figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+semilogy&#40;δ, marker&#61;&quot;x&quot;&#41;
+xlabel&#40;&quot;Number of iterations&quot;&#41;
+ylabel&#40;&quot;Maximum relative error&quot;&#41;
+xticks&#40;&#91;1, 5, 10, 15, 20&#93;&#41;
+
+Λ &#61; Diagonal&#40;D&#41;
+
+err_offdiag &#61; round&#40;maximum&#40;abs.&#40;D - Λ&#41;&#41;, sigdigits&#61;2&#41;
+println&#40;&quot;|D-Λ|: &#36;err_offdiag&quot;&#41;
+
+err_diag &#61; round&#40;maximum&#40;abs.&#40;A * Q - Q * Λ&#41;&#41;, sigdigits&#61;2&#41;
+println&#40;&quot;|AQ-QΛ|: &#36;err_diag&quot;&#41;</code></pre><pre><code class="plaintext code-output">ArgumentError: Package PyPlot [d330b81b-6aea-500a-939a-2ce795aea3ee] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<div class="reduce-vspace"><span style="color:red;">// Image matching '/assets/posts/2021/06/29-qr-iteration/code/conv.svg' not found. //</span></div>
+<p>In this form, the algorithm computes \(K\) QR factorisations of an \(n\times n\) matrix and computes \(2K\) matrix-matrix of the same sizes. All these operations are \(\mathcal O(n^3)\) so, overall, the complexity is \(O(Kn^3)\) where \(K\) is the number of iterations.</p>
+<h3 id="generalisations"><a href="#generalisations" class="header-anchor">Generalisations</a></h3>
+<p>Here we only considered a fairly simple case &#40;symmetric matrix with distinct eigenvalues&#41;. In practice, the QR algorithm is more sophisticated, can deal with non-symmetric matrices and encourage convergence by introducing shifts in the iteration.</p>
+<p>See <span class="bibref"><a href="#gvl83">Golub and Van Loan (1983)</a></span> for a much more detailed approach on the topic, <span class="bibref"><a href="#t19">Townsend (2019)</a></span> is also a nice tutorial discussing the QR algorithm and its shifted variants.</p>
+<h2 id="short_references"><a href="#short_references" class="header-anchor">Short references</a></h2>
+<ol>
+<li><p><a id="gvl83" class="anchor"></a><strong>Golub</strong>, <strong>Van Loan</strong>, <a href="https://twiki.cern.ch/twiki/pub/Main/AVFedotovHowToRootTDecompQRH/Golub_VanLoan.Matr_comp_3ed.pdf">Matrix Computations</a>, 1983. – Chapter 7 covers the QR algorithm and chapter 8 considers optimisations for the symmetric case.</p>
+</li>
+<li><p><a id="p06" class="anchor"></a><strong>Persson</strong>, <a href="https://dspace.mit.edu/bitstream/handle/1721.1/75282/18-335j-fall-2006/contents/lecture-notes/lec16.pdf">The QR algorithm II</a>, 2006. – A slide deck on the QR algorithm shifted QR and numerical stability.</p>
+</li>
+<li><p><a id="t19" class="anchor"></a><strong>Townsend</strong>, <a href="http://pi.math.cornell.edu/~web6140/TopTenAlgorithms/QRalgorithm.html">The QR algorithm</a>, 2019. – A tutorial on the QR algorithm using Julia and discussing the shifted QR algorithm.</p>
+</li>
+</ol>
+
+  </div> <!-- container -->
+</main> <!-- flex shrink 0 -->
+
+<div class='py-3'></div>
+
+<footer class="footer mt-auto py-3 bg-light">
+	<div class="container">
+		<span class="text-muted">
+			&copy; Saurabh Kumar, 2024.
+			Website made with <a href="https://franklinjl.org">Franklin.jl</a>.
+		</span>
+	</div>
+</footer>
+
+
+	<script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+	<script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+	<script>
+		(function(){
+
+			// Get the elements.
+			// - the 'pre' element.
+			// - the 'div' with the 'paste-content' id.
+
+			var pre = document.getElementsByTagName('pre');
+
+			// Add a copy button in the 'pre' element.
+			// which only has the className of 'language-'.
+
+			for (var i = 0; i < pre.length; i++) {
+				var cName = pre[i].children[0].className
+				if ( cName.includes('language-') || cName.includes('hljs') && !cName.includes('plaintext') ) {
+					var button           = document.createElement('button');
+					button.className = 'copy-button';
+					button.textContent = 'Copy';
+
+					pre[i].appendChild(button);
+				}
+			};
+
+			// Run Clipboard
+
+			var copyCode = new Clipboard('.copy-button', {
+				target: function(trigger) {
+					return trigger.previousElementSibling;
+				}
+			});
+
+			// On success:
+			// - Change the "Copy" text to "Copied".
+			// - Swap it to "Copy" in 2s.
+			// - Lead user to the "contenteditable" area with Velocity scroll.
+
+			copyCode.on('success', function(event) {
+				event.clearSelection();
+				event.trigger.textContent = 'Copied';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 2000);
+
+			});
+
+			// On error (Safari):
+			// - Change the  "Press Ctrl+C to copy"
+			// - Swap it to "Copy" in 2s.
+
+			copyCode.on('error', function(event) {
+				event.trigger.textContent = 'Press "Ctrl + C" to copy';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 5000);
+			});
+
+		})();
+	</script>
+
+
+
+<!-- CONTENT ENDS HERE -->
+
+
+  
+    <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+
+    <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+
+
+
+
+  </body>
+</html>
