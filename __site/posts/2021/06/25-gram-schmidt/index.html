@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8J6S1S25TZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8J6S1S25TZ');
+  </script>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Saurabh Kumar's website">
+  <meta name="author" content="Saurabh Kumar">
+  <meta name="generator" content="Franklin">
+
+  <link rel=icon href="/assets/favicon.png">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+  
+    
+  <link rel="stylesheet" href="/libs/katex/katex.min.css">
+
+
+
+  <link rel="stylesheet" href="/libs/highlight/github.min.css">
+
+  <script src="/libs/clipboard.min.js"></script>
+
+
+ <title>Gram-Schmidt Orthogonalisation</title>    
+
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  <style>
+    :root {
+      --oxb: #002147;
+      --camb: #A3C1AD;
+      --banana: #FFE135;
+      --lgray: #D3D3D3;
+    }
+
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {font-size: 3.5rem;}
+    }
+
+    .border-oxb {border-color: var(--oxb);}
+    .bg-oxb {background-color: var(--oxb);}
+    .text-oxb {color: var(--oxb);}
+    .border-camb {border-color: var(--camb);}
+
+    .bg-camb {background-color: var(--camb);}
+    .text-camb {color: var(--camb);}
+  </style>
+
+</head>
+
+
+  <body class="d-flex flex-column h-100">
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" id="main-name" href="/">Saurabh Kumar</a>
+
+      <!-- POST - TAGS - ABOUT -->
+      <ul class="navbar-nav" id="main-nav">
+        <li class="nav-item">
+          <a class="nav-link "
+             aria-current="page" href="/posts/">Posts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/tags/">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/about/">About</a>
+        </li>
+      </ul>
+
+      <!-- POST TITLE / TAG -->
+      <ul class="navbar-nav me-auto" id="title-nav">
+        
+          
+          <li class="nav-item" id="post-title">
+            <a class="nav-link active" href="#">Gram-Schmidt Orthogonalisation</a>
+          </li>
+          
+        
+        
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+    <div class="pt-5"> </div>
+
+
+
+<!-- Content appended here -->
+
+<h1 id="gram-schmidt_procedure"><a href="#gram-schmidt_procedure" class="header-anchor">Gram-Schmidt Procedure</a></h1>
+<div class="tags"><a href="/tags/" id="tag-icon"><svg width="20" height="20" viewBox="0 0 512 512"><defs><style>.cls-1{fill:#141f38}</style></defs><path class="cls-1" d="M215.8 512a76.1 76.1 0 0 1-54.17-22.44L22.44 350.37a76.59 76.59 0 0 1 0-108.32L242 22.44A76.11 76.11 0 0 1 296.2 0h139.2A76.69 76.69 0 0 1 512 76.6v139.19A76.08 76.08 0 0 1 489.56 270L270 489.56A76.09 76.09 0 0 1 215.8 512zm80.4-486.4a50.69 50.69 0 0 0-36.06 14.94l-219.6 219.6a51 51 0 0 0 0 72.13l139.19 139.19a51 51 0 0 0 72.13 0l219.6-219.61a50.67 50.67 0 0 0 14.94-36.06V76.6a51.06 51.06 0 0 0-51-51zm126.44 102.08A38.32 38.32 0 1 1 461 89.36a38.37 38.37 0 0 1-38.36 38.32zm0-51a12.72 12.72 0 1 0 12.72 12.72 12.73 12.73 0 0 0-12.72-12.76z"/><path class="cls-1" d="M217.56 422.4a44.61 44.61 0 0 1-31.76-13.16l-83-83a45 45 0 0 1 0-63.52L211.49 154a44.91 44.91 0 0 1 63.51 0l83 83a45 45 0 0 1 0 63.52L249.31 409.24a44.59 44.59 0 0 1-31.75 13.16zm-96.7-141.61a19.34 19.34 0 0 0 0 27.32l83 83a19.77 19.77 0 0 0 27.31 0l108.77-108.7a19.34 19.34 0 0 0 0-27.32l-83-83a19.77 19.77 0 0 0-27.31 0l-108.77 108.7z"/><path class="cls-1" d="M294.4 281.6a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85zM256 320a12.75 12.75 0 0 1-9.05-3.75l-51.2-51.2a12.8 12.8 0 0 1 18.1-18.1l51.2 51.2A12.8 12.8 0 0 1 256 320zM217.6 358.4a12.75 12.75 0 0 1-9-3.75l-51.2-51.2a12.8 12.8 0 1 1 18.1-18.1l51.2 51.2a12.8 12.8 0 0 1-9.05 21.85z"/></svg></a><a href="/tag/code/">code</a>, <a href="/tag/linear_algebra/">linear algebra</a></div>
+<div class="franklin-toc"><ol><li><a href="#orthonormal_basis">Orthonormal basis</a></li><li><a href="#constructing_an_orthonormal_basis_out_of_a_set_of_independent_vectors">Constructing an orthonormal basis out of a set of independent vectors</a><ol><li><a href="#side_note_on_the_qr_and_cholesky_decomposition">Side note on the QR and Cholesky decomposition</a></li><li><a href="#what_if_the_original_vectors_are_not_independent">What if the original vectors are not independent?</a></li><li><a href="#computational_complexity_of_gs">Computational complexity of GS</a></li></ol></li><li><a href="#implementing_gs">Implementing GS</a><ol><li><a href="#numerical_stability_and_modified-gs">Numerical stability and modified-GS</a></li></ol></li><li><a href="#short_references">Short references</a></li></ol></div>
+<h2 id="orthonormal_basis"><a href="#orthonormal_basis" class="header-anchor">Orthonormal basis</a></h2>
+<p>A set \(\{u_1, \dots, u_n\}\) of vectors in \(\mathbb R^n\) is an <em>orthonormal basis</em> of \(\mathbb R^n\) if \(\left\langle u_i, u_j\right\rangle=\delta_{ij}\) for any \(i,j \in \{1,\dots, n\}\). For such a set, any vector \(w\) in \(\mathbb R^n\) can be expressed as a linear combination of the \(u_i\):</p>
+\[ w \quad\!\! =\quad\!\! \sum_{i=1}^n \alpha_i u_i, \]
+<p>where the weights \(\alpha_i\) can easily be obtained by leveraging the orthonormality: \[\begin{array}{rcl} \left\langle w, u_j\right\rangle &=& \left\langle \sum_{i=1}^n\alpha_i u_i, u_j\right\rangle \\
+                    &=& \sum_{i=1}^n\alpha_i \delta_{ij} \quad\!\! =\quad\!\! \alpha_j.\end{array}\]</p>
+<p>Denoting \(U\) the \(n \times n\) matrix with columns \(\{u_1, \dots, u_n\}\), the above can be written more compactly as \(UU^t=I\), and</p>
+\[ w \quad\!\! =\quad\!\! Ua \quad\Longleftrightarrow\quad a \quad\!\! =\quad\!\! U^tw, \]
+<p>with \(a \in \mathbb R^n\) the vector whose \(j\)-th component is \(\alpha_j\).</p>
+<h2 id="constructing_an_orthonormal_basis_out_of_a_set_of_independent_vectors"><a href="#constructing_an_orthonormal_basis_out_of_a_set_of_independent_vectors" class="header-anchor">Constructing an orthonormal basis out of a set of independent vectors</a></h2>
+<p>Let&#39;s say we have \(\{v_1, \dots, v_n\}\), a set of \(n\) &nbsp;<em>linearly independent</em> vectors in \(\mathbb R^n\). We can construct an orthonormal basis \(\{q_1, \dots, q_n\}\) iteratively by starting with</p>
+\[ q_1 \quad\!\! \propto\quad\!\! v_1 \]
+<p>where \(\propto\) is used to mean that the left-hand-side is proportional to the right-hand-side and has euclidean norm 1 &#40;i.e. here \(q_1 = v_1/\|v_1\|\), note that \(v_1\) cannot be zero otherwise the set wouldn&#39;t be independent&#41;.</p>
+<p>The next vector, \(q_2\), should be orthogonal to \(q_1\) and should span \(\mathrm{Im}\{v_1, v_2\}\). Assume we have that \(q_2\) for now. We can then write:</p>
+\[\begin{array}{rcl} v_2 &=& \alpha_{21} q_1 + \alpha_{22} q_2\end{array}\]
+<p>From the previous point, we know that \(\alpha_{21} = \left\langle v_2, q_1\right\rangle\) so that</p>
+\[
+    q_2 \quad\!\! \propto\quad\!\! v_2 - \left\langle v_2, q_1\right\rangle q_1.
+\]
+<p>The term \(\left\langle v_2, q_1\right\rangle q_1\) is the projection of \(v_2\) onto the space spanned by \(q_1\).</p>
+<p>Iterating this is the <em>Gram-Schmidt procedure</em> &#40;GS&#41;:</p>
+<a id="gs1" class="anchor"></a>\[\begin{array}{rcl} q_k \quad\!\! \propto\quad\!\! v_k - \displaystyle\sum_{i=1}^{k-1}\left\langle v_k, q_i\right\rangle q_i \end{array}\]
+<p>In words, to construct the \(k\)-th direction of the basis, we take \(v_k\) and subtract is projection onto the space spanned by \(\{q_1, \dots, q_{k-1}\}\).</p>
+<h3 id="side_note_on_the_qr_and_cholesky_decomposition"><a href="#side_note_on_the_qr_and_cholesky_decomposition" class="header-anchor">Side note on the QR and Cholesky decomposition</a></h3>
+<p>After the \(k\)-th step of GS, we can express the vector \(v_k\) as a linear combination of the \(\{q_1,\dots,q_k\}\):</p>
+\[
+    v_k \quad\!\! =\quad\!\! \sum_{i=1}^k \left\langle v_k, q_i\right\rangle q_i.
+\]
+<p>Let \(Q\) be the matrix with columns \(\{q_1,\dots,q_k\}\) then the above expression can be written \(v_k = Qr_k\) where \(r_k\) is a vector of \(n\) components with \(i\)-th component given by</p>
+\[
+    (r_{k})_i \quad\!\! =\quad\!\! \begin{cases} \,\left\langle v_k, q_i\right\rangle &\text{for}\quad i \in \{1, \dots, k\}\\
+    \quad\,\, 0 &\text{for}\quad i \in \{k+1, \dots, n\}\end{cases}.
+\]
+<p>In matrix form, we can write</p>
+<a id="qr1" class="anchor"></a>\[
+    V \quad\!\! =\quad\!\! QR 
+\]
+<p>where \(V\) is the \(n\times n\) matrix with columns \(\{v_1, \dots, v_n\}\) and \(R\) is an \(n\times n\) upper triangular matrix with <nobr> \(r_{ik} = \left\langle v_k, q_i\right\rangle 1_{i\le k}\)</nobr>.</p>
+<p>Such a decomposition of a full-rank matrix into a product of an orthogonal matrix \(Q\) and an upper-triangular matrix \(R\) is called a QR-decomposition or QR-factorisation.</p>
+<div class="alert alert-secondary"><strong>Note</strong>: while the GS procedure is one way of obtaining a QR-factorisation of a matrix, it is not the only one and usually not the one that is used in practice as other methods &#40;Householder, Givens&#41; have better computational properties see e.g. <span class="bibref"><a href="#gvl83">Golub and Van Loan (1983)</a></span>.</div>
+<p>A final observation is that, starting from <span class="eqref">(<a href="#qr1">10</a>)</span>, we have:</p>
+\[
+    V^t V \quad\!\! =\quad\!\! R^tR.
+\]
+<p>Provided the diagonal elements of \(R\) are positive, the \(R\) matrix is thus also the Cholesky factor of \(V^tV\). We can always constrain the diagonal elements of \(R\) to be positive since \(r_{ii} = \left\langle v_i, q_i\right\rangle\), and we can just swap the sign of \(q_i\) after computing <span class="eqref">(<a href="#gs1">7</a>)</span>.</p>
+<h3 id="what_if_the_original_vectors_are_not_independent"><a href="#what_if_the_original_vectors_are_not_independent" class="header-anchor">What if the original vectors are not independent?</a></h3>
+<p>Let&#39;s now say we have \(\{v_1, \dots, v_m\}\) a set of \(m\) vectors in \(\mathbb R^n\) that are not necessarily linearly independent. Let \(p \le \min(m, n)\) the dimension of the space spanned by these vectors, we can apply GS to find \(\{q_1, \dots, q_p\}\) an orthonormal basis of that space. The procedure is identical except some iterations where the right-hand-side of <span class="eqref">(<a href="#gs1">7</a>)</span> is zero &#40;i.e. \(v_k\) can be fully represented by the ongoing set of \(q_j\)&#41;, in which case we just skip that step.</p>
+<p>More explicitly, the steps are:</p>
+<ol>
+<li><p>\(q_1 \propto v_1\); let \(c=2, k=2\)</p>
+</li>
+<li><p>compute \(w = v_k - \sum_{i=1}^{c-1}\left\langle v_k, q_i\right\rangle q_i\)</p>
+<ol>
+<li><p>if \(w=0\), increment \(k\) &#40;the vector \(v_k\) can already be represented by the  running \(q_i\)&#41;</p>
+</li>
+<li><p>otherwise, let \(q_c \propto w\) and increment both \(c\) and \(k\)</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>Once the last \(v_k\) has been seen, we have a set of \(p\) orthogonal vectors \(\{q_1, \dots, q_p\}\) that forms a basis in which we can represent all of the \(v_k\).</p>
+<h3 id="computational_complexity_of_gs"><a href="#computational_complexity_of_gs" class="header-anchor">Computational complexity of GS</a></h3>
+<p>Say we have \(m\) vectors in \(\mathbb R^n\) and want to form an orthonormal basis for those. At step \(c\) of the algorithm, we have to:</p>
+<ul>
+<li><p>compute \((c-1)\) dot products i.e. \(\mathcal O(cn)\) flops,</p>
+</li>
+<li><p>compute \(c\) sums of vectors i.e. \(\mathcal O(cn)\) flops,</p>
+</li>
+<li><p>normalise a vector i.e. \(\mathcal O(n)\) flops</p>
+</li>
+</ul>
+<p>i.e. \(\mathcal O(cn)\) per step. We have to consider all \(m\) vectors &#40;unless \(m > n\) and \(c\) reaches \(n\) before \(k\) in which case we can stop early&#41;. To simplify let&#39;s say we consider all of them, so that we sum over \(c=1,\dots,m\). Then the overall complexity is \(\mathcal O(nm^2)\).</p>
+<h2 id="implementing_gs"><a href="#implementing_gs" class="header-anchor">Implementing GS</a></h2>
+<p>We can code a simple version of GS in Julia, transcribing the core loop explicitly and not caring about allocations or optimisations so that the code is very simple to read:</p>
+<pre><code class="language-julia">using LinearAlgebra
+
+function gs&#40;A::Matrix&#123;T&#125;; tol&#61;1e-10&#41; where T
+    n, m &#61; size&#40;A&#41;
+    Q &#61; zeros&#40;n, n&#41;
+    R &#61; zeros&#40;n, m&#41;
+    c &#61; 1
+    for k &#61; 1:m
+        w &#61; A&#91;:, k&#93;
+        for i &#61; 1:c-1
+            R&#91;i, k&#93; &#61; dot&#40;A&#91;:, k&#93;, Q&#91;:, i&#93;&#41;
+            w .-&#61; R&#91;i, k&#93; .* Q&#91;:, i&#93;            # w &#61; a_k - ∑⟨a_k, q_i⟩q_i
+        end
+        η &#61; norm&#40;w&#41;
+        η &lt; tol &amp;&amp; continue                     # check if w ≈ 0
+        Q&#91;:, c&#93; .&#61; w ./ η
+        R&#91;c, k&#93; &#61; dot&#40;A&#91;:, k&#93;, Q&#91;:, c&#93;&#41;
+        c &#43;&#61; 1
+    end
+    p &#61; c - 1
+    return Q&#91;:, 1:p&#93;, R&#91;1:p, :&#93;
+end</code></pre><pre><code class="plaintext code-output">gs (generic function with 1 method)</code></pre>
+<div class="alert alert-warning"><strong>Note</strong>: if you&#39;re not used to Julia, you might wonder about the dots &#40;<code>.</code>&#41; preceding operators in the code above. They generally mean &quot;element-wise operation&quot; so for instance <code>w .-&#61; v</code> effectively means <code>w&#91;i&#93; -&#61; v&#91;i&#93;</code> for each <code>i</code>. See also <a href="https://julialang.org/blog/2017/01/moredots/">this excellent post</a> on the topic.</div>
+<p>We can quickly check this works as expected:</p>
+<pre><code class="language-julia">using StableRNGs
+rng &#61; StableRNG&#40;512&#41;
+
+err&#40;E&#41; &#61; println&#40;&quot;Max error: &quot;, round&#40;maximum&#40;abs.&#40;E&#41;&#41;, sigdigits&#61;2&#41;&#41;
+
+n, m &#61; 10, 5
+A &#61; randn&#40;rng, n, m&#41;
+Q, R &#61; gs&#40;A&#41;
+err&#40;Q&#39; * Q - I&#41;
+err&#40;Q * R - A&#41;
+
+n, m &#61; 10, 20
+A &#61; randn&#40;rng, n, m&#41;
+Q, R &#61; gs&#40;A&#41;
+err&#40;Q&#39; * Q - I&#41;
+err&#40;Q * R - A&#41;</code></pre><pre><code class="plaintext code-output">ArgumentError: Package StableRNGs [860ef19b-820b-49d6-a774-d7a799459cd3] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+</code></pre>
+<div class="alert alert-warning"><strong>Note</strong>: <a href="https://github.com/JuliaRandom/StableRNGs.jl"><code>StableRNGs</code></a> is a library that offers guaranteed reproducible streams of random numbers so that if you run the code above you should get exactly the same results as shown here.</div>
+<p>The code above considers two toy examples: one where there&#39;s fewer vectors than dimensions and that are linearly independent with high probability and one where there&#39;s more vectors than dimensions and so that are necessarily not linearly independent.</p>
+<p>In both cases, we check whether \(Q^tQ=I\) &#40;orthogonal columns&#41; and whether \(QR=A\) by looking at the residuals. As can be seen above, they&#39;re extremely small which confirms that, in simple settings, the code above does the right thing.</p>
+<h3 id="numerical_stability_and_modified-gs"><a href="#numerical_stability_and_modified-gs" class="header-anchor">Numerical stability and modified-GS</a></h3>
+<p>The procedure above &#40;often referred to as <em>classical Gram-Schmidt</em> or CGS&#41; is not numerically stable in that floating-point errors in computation of the \(q_i\) will compound badly in the expression <span class="eqref">(<a href="#gs1">7</a>)</span>. We won&#39;t do the stability analysis in details, see for instance <span class="bibref"><a href="#bjorck10">Björck (2010)</a></span>.</p>
+<p>An alternative algorithm is the <em>modified Gram-Schmidt</em> or MGS where <span class="eqref">(<a href="#gs1">7</a>)</span> is re-organised as an iteration:</p>
+<ul>
+<li><p>\(w^{(1)} = v_k - \left\langle v_k, q_1\right\rangle q_1\),</p>
+</li>
+<li><p>\(w^{(i)} = w^{(i-1)} - \left\langle w^{(i-1)}, q_{i-1}\right\rangle q_{i-1}\) for \(i=2, \dots, k-1\).</p>
+</li>
+</ul>
+<p>In exact arithmetic, this is exactly the same as <span class="eqref">(<a href="#gs1">7</a>)</span>, but in the presence of numerical errors, each \(w^{(1)}\) is actually obtained as \(w^{(1)}+e_1\) for some small error vector \(e_1\). However, whereas in <span class="eqref">(<a href="#gs1">7</a>)</span> these get compounded, in MGS these get projected which leads to better numerical properties.</p>
+<p>In Julia, it&#39;s easy to work in lower precision than 64 bits which can help highlight the benefit. Modifying the code above for the modified variant is trivial, we just need to replace the line <code>R&#91;i, k&#93; &#61; dot&#40;A&#91;:, k&#93;, Q&#91;:, i&#93;&#41;</code> for <code>R&#91;i, k&#93; &#61; dot&#40;w, Q&#91;:, i&#93;&#41;</code>:</p>
+<pre><code class="language-julia">function mgs&#40;A::Matrix&#123;T&#125;; tol&#61;1e-10&#41; where T
+    n, m &#61; size&#40;A&#41;
+    Q &#61; zeros&#40;T, n, n&#41;
+    R &#61; zeros&#40;T, n, m&#41;
+    c &#61; 1
+    for k &#61; 1:m
+        w &#61; A&#91;:, k&#93;
+        for i &#61; 1:c-1
+            R&#91;i, k&#93; &#61; dot&#40;w, Q&#91;:, i&#93;&#41;           # the modification
+            w .-&#61; R&#91;i, k&#93; .* Q&#91;:, i&#93;            
+        end
+        η &#61; norm&#40;w&#41;
+        η &lt; tol &amp;&amp; continue
+        Q&#91;:, c&#93; .&#61; w ./ η
+        R&#91;c, k&#93; &#61; dot&#40;A&#91;:, k&#93;, Q&#91;:, c&#93;&#41;
+        c &#43;&#61; 1
+    end
+    p &#61; c - 1
+    return Q&#91;:, 1:p&#93;, R&#91;1:p, :&#93;
+end</code></pre><pre><code class="plaintext code-output">mgs (generic function with 1 method)</code></pre>
+<p>Let&#39;s see how this fares:</p>
+<pre><code class="language-julia">rng &#61; StableRNG&#40;5511&#41;
+
+A &#61; Float16.&#40;rand&#40;rng, 50, 50&#41;.^2&#41;
+
+Q, R &#61; gs&#40;A&#41;
+Qm, Rm &#61; mgs&#40;A&#41;
+
+err&#40;Q&#39; * Q - I&#41;
+err&#40;Q * R - A&#41;
+err&#40;Qm&#39; * Qm - I&#41;
+err&#40;Qm * Rm - A&#41;</code></pre><pre><code class="plaintext code-output">UndefVarError: `StableRNG` not defined
+</code></pre>
+<p>There is an improvement though maybe not a spectacular one. There are however cases where CGS can be catastrophically bad whereas MGS still fares well, we refer the reader to the references in <span class="bibref"><a href="#bjorck10">Björck (2010)</a></span> for more on this.</p>
+<h2 id="short_references"><a href="#short_references" class="header-anchor">Short references</a></h2>
+<ol>
+<li><p><a id="gvl83" class="anchor"></a><strong>Golub</strong>, <strong>Van Loan</strong>, <a href="https://twiki.cern.ch/twiki/pub/Main/AVFedotovHowToRootTDecompQRH/Golub_VanLoan.Matr_comp_3ed.pdf">Matrix Computations</a>, 1983. – Chapter 5 covers the QR factorisation with the Householder and Givens methods.</p>
+</li>
+<li><p><a id="bjorck10" class="anchor"></a><strong>Björck</strong>, <a href="https://www.cis.upenn.edu/~cis610/Gram-Schmidt-Bjorck.pdf">Gram-Schmidt Orthogonalization: 100 Years and More</a>, 2010. – slides 16 to 23 discuss the loss of orthogonality in classical GS and bounds in modified GS.</p>
+</li>
+</ol>
+
+  </div> <!-- container -->
+</main> <!-- flex shrink 0 -->
+
+<div class='py-3'></div>
+
+<footer class="footer mt-auto py-3 bg-light">
+	<div class="container">
+		<span class="text-muted">
+			&copy; Saurabh Kumar, 2025.
+			Website made with <a href="https://franklinjl.org">Franklin.jl</a>.
+		</span>
+	</div>
+</footer>
+
+
+	<script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+	<script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+	<script>
+		(function(){
+
+			// Get the elements.
+			// - the 'pre' element.
+			// - the 'div' with the 'paste-content' id.
+
+			var pre = document.getElementsByTagName('pre');
+
+			// Add a copy button in the 'pre' element.
+			// which only has the className of 'language-'.
+
+			for (var i = 0; i < pre.length; i++) {
+				var cName = pre[i].children[0].className
+				if ( cName.includes('language-') || cName.includes('hljs') && !cName.includes('plaintext') ) {
+					var button           = document.createElement('button');
+					button.className = 'copy-button';
+					button.textContent = 'Copy';
+
+					pre[i].appendChild(button);
+				}
+			};
+
+			// Run Clipboard
+
+			var copyCode = new Clipboard('.copy-button', {
+				target: function(trigger) {
+					return trigger.previousElementSibling;
+				}
+			});
+
+			// On success:
+			// - Change the "Copy" text to "Copied".
+			// - Swap it to "Copy" in 2s.
+			// - Lead user to the "contenteditable" area with Velocity scroll.
+
+			copyCode.on('success', function(event) {
+				event.clearSelection();
+				event.trigger.textContent = 'Copied';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 2000);
+
+			});
+
+			// On error (Safari):
+			// - Change the  "Press Ctrl+C to copy"
+			// - Swap it to "Copy" in 2s.
+
+			copyCode.on('error', function(event) {
+				event.trigger.textContent = 'Press "Ctrl + C" to copy';
+				window.setTimeout(function() {
+					event.trigger.textContent = 'Copy';
+				}, 5000);
+			});
+
+		})();
+	</script>
+
+
+
+<!-- CONTENT ENDS HERE -->
+
+
+  
+    <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+
+
+
+    <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+
+
+
+
+  </body>
+</html>
